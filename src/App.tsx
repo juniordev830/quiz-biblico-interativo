@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { score, selectQuestions, shuffle, summarize, timeLeft } from './game.ts';
+import { reviewAnswer, score, selectQuestions, shuffle, summarize, timeLeft } from './game.ts';
 import type { Attempt } from './game.ts';
 import { levels, questions } from './questions.ts';
 import type { Level, Question } from './questions.ts';
@@ -80,9 +80,16 @@ export default function App() {
       </form>}
       {round?.finished && <>
         <h2>Resultado da rodada</h2><p className="quiz-score" role="status">{score(round.items, round.answers)} de {round.items.length}</p>
-        <ul className="list">{round.items.map(item => <li className="subtle" key={item.id}>
-          <strong>{round.answers[item.id] === item.answer ? 'Acertou' : 'Revisar'} · {item.reference}</strong><p>{item.prompt}</p>
-        </li>)}</ul>
+        <ul className="list">{round.items.map(item => {
+          const review = reviewAnswer(item, round.answers[item.id]);
+          return <li className="subtle" key={item.id}>
+            <strong>{review.correct ? 'Acertou' : 'Revisar'} · {item.reference}</strong>
+            <p>{item.prompt}</p>
+            <p className="muted">Sua resposta: {review.selectedOption ?? (review.expired ? 'Tempo esgotado' : 'Sem resposta')}</p>
+            {!review.correct && <p>Resposta correta: {review.correctOption}</p>}
+            <small>{item.reasoning}</small>
+          </li>;
+        })}</ul>
         <button className="primary" onClick={() => setRound(undefined)}>Jogar outra rodada</button>
       </>}
       {round && !round.finished && question && <>
