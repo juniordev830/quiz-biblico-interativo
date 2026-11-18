@@ -67,7 +67,7 @@ export default function App() {
   }
 
   return <div className="split">
-    <section className="panel stack">
+    <section className="panel stack" id="rodada" tabIndex={-1}>
       {!round && <form className="form" onSubmit={e => { e.preventDefault(); if (pool.length) start(); }}>
         <h2>Configurar rodada</h2>
         <div className="two collapse">
@@ -112,7 +112,7 @@ export default function App() {
       {storageError && <p role="alert" className="error">{storageError}</p>}
     </section>
     <aside className="stack">
-      <section className="panel stack">
+      <section className="panel stack" id="desempenho" tabIndex={-1}>
         <h2>Seu desempenho</h2>
         <div className="three">
           <div className="stat">Rodadas<strong>{stats.rounds}</strong></div>
@@ -121,7 +121,7 @@ export default function App() {
         </div>
         <p className="muted">Banco inicial com {questions.length} perguntas comentadas.</p>
       </section>
-      <section className="panel stack">
+      <section className="panel stack" id="historico" tabIndex={-1}>
         <h2>Histórico</h2>
         {!history.length && <p className="muted">Complete uma rodada para registrar sua pontuação.</p>}
         <ul className="list">{history.map(attempt => <li key={attempt.id} className="subtle">
