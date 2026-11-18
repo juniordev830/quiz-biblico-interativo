@@ -17,6 +17,15 @@ export function score(questions: Question[], answers: Record<string, number>) {
   return questions.reduce((total, question) => total + Number(answers[question.id] === question.answer), 0);
 }
 
+export function reviewAnswer(question: Question, answer: number | undefined) {
+  return {
+    correctOption: question.options[question.answer],
+    selectedOption: answer === undefined ? undefined : question.options[answer],
+    expired: answer === -1,
+    correct: answer === question.answer,
+  };
+}
+
 export function summarize(history: Attempt[]) {
   const total = history.reduce((sum, item) => sum + item.total, 0);
   const correct = history.reduce((sum, item) => sum + item.correct, 0);

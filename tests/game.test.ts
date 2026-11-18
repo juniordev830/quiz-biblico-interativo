@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { score, selectQuestions, shuffle, summarize, timeLeft } from '../src/game.ts';
+import { reviewAnswer, score, selectQuestions, shuffle, summarize, timeLeft } from '../src/game.ts';
 import { levels, questions } from '../src/questions.ts';
 
 test('banco contém alternativas únicas, gabarito válido e referências', () => {
@@ -23,6 +23,16 @@ test('embaralhamento não altera entrada nem perde elementos', () => {
 test('pontuação ignora respostas fora da rodada, ausentes e expiradas', () => {
   assert.equal(score(questions.slice(0, 2), { [questions[0].id]: questions[0].answer, [questions[1].id]: -1, abc: 0 }), 1);
   assert.equal(score(questions, {}), 0);
+});
+test('revisão usa a ordem da rodada e distingue erro de tempo esgotado', () => {
+  const question = { ...questions[0], options: ['B', 'A', 'C', 'D'], answer: 1 };
+  assert.deepEqual(reviewAnswer(question, 0), {
+    correctOption: 'A', selectedOption: 'B', expired: false, correct: false,
+  });
+  assert.equal(reviewAnswer(question, 1).correct, true);
+  assert.equal(reviewAnswer(question, -1).expired, true);
+  assert.equal(reviewAnswer(question, -1).selectedOption, undefined);
+  assert.equal(reviewAnswer(question, undefined).expired, false);
 });
 test('cronômetro arredonda o valor mostrado e para em zero', () => {
   assert.equal(timeLeft(null, 100), null);
