@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { reviewAnswer, score, selectQuestions, shuffle, summarize, timeLeft } from './game.ts';
+import { parseHistory, reviewAnswer, score, selectQuestions, shuffle, summarize, timeLeft } from './game.ts';
 import type { Attempt } from './game.ts';
 import { levels, questions } from './questions.ts';
 import type { Level, Question } from './questions.ts';
@@ -16,7 +16,7 @@ export default function App() {
   const [timed, setTimed] = useState(false);
   const [round, setRound] = useState<Round>();
   const [clock, setClock] = useState(Date.now);
-  const [history, setHistory, storageError] = useLocalState<Attempt[]>('quiz-v1', []);
+  const [history, setHistory, storageError] = useLocalState<Attempt[]>('quiz-v1', [], parseHistory);
   const pool = selectQuestions(questions, book, level);
   const question = round?.items[round.position];
   const answer = question && round ? round.answers[question.id] : undefined;
