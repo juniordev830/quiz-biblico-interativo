@@ -1,6 +1,21 @@
 import type { Level, Question } from './questions.ts';
 
 export type Attempt = { id: string; at: string; correct: number; total: number; book: string; level: string };
+export function parseHistory(raw: string): Attempt[] {
+  const history: unknown = JSON.parse(raw);
+  if (!Array.isArray(history) || !history.every((attempt: Partial<Attempt> | null) =>
+    attempt && typeof attempt.id === 'string' && attempt.id.length > 0
+    && typeof attempt.at === 'string' && Number.isFinite(Date.parse(attempt.at))
+    && typeof attempt.book === 'string' && typeof attempt.level === 'string'
+    && typeof attempt.total === 'number' && Number.isSafeInteger(attempt.total) && attempt.total > 0
+    && typeof attempt.correct === 'number' && Number.isSafeInteger(attempt.correct)
+    && attempt.correct >= 0 && attempt.correct <= attempt.total
+  ) || new Set(history.map(attempt => attempt.id)).size !== history.length) {
+    throw new Error('Histórico inválido.');
+  }
+  return history;
+}
+
 export const selectQuestions = (questions: Question[], book: string, level: '' | Level) =>
   questions.filter(question => (!book || question.book === book) && (!level || question.level === level));
 
